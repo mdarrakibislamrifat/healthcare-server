@@ -1,8 +1,12 @@
-const express = require("express");
-const app = express();
+import type { Server } from "http";
+import app from "./app.js";
 
 const port = 3000;
 
-app.listen(port, () => {
-  console.log(`Server is running on :${port}`);
-});
+async function main() {
+  const server: Server = app.listen(port, () => {
+    console.log(`Healthcare Server is running on http://localhost:${port}`);
+  });
+}
+
+main();
