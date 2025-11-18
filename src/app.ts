@@ -4,6 +4,7 @@ import express, {
   type Response,
 } from "express";
 import cors from "cors";
+import { UserRoutes } from "./app/modules/User/user.routes.js";
 
 const app: Application = express();
 app.use(cors());
@@ -13,5 +14,7 @@ app.get("/", (req: Request, res: Response) => {
     message: "Healthcare Server is running",
   });
 });
+
+app.use("/api/v1/user", UserRoutes);
 
 export default app;

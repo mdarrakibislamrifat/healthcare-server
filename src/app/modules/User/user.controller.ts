@@ -1,0 +1,11 @@
+import type { Request, Response } from "express";
+import { userService } from "./user.service.js";
+
+const createAdmin = async (req: Request, res: Response) => {
+  const result = await userService.createAdmin(req, res);
+  res.send(result);
+};
+
+export const userController = {
+  createAdmin,
+};
