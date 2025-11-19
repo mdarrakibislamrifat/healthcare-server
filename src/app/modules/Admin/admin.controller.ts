@@ -1,26 +1,14 @@
 import { type Request, type Response } from "express";
 import { adminService } from "./admin.service.js";
-
-const pick = (obj: any, keys: string[]) => {
-  const finalObj: any = {};
-
-  for (const key of keys) {
-    if (obj && Object.hasOwnProperty.call(obj, key)) {
-      finalObj[key] = obj[key];
-    }
-  }
-  return finalObj;
-};
+import pick from "../../../shared/pick.js";
+import { adminFilterableFields } from "./admin.constant.js";
 
 const getAllFromDB = async (req: Request, res: Response) => {
   try {
-    const filter = pick(req.query, [
-      "name",
-      "email",
-      "searchTerm",
-      "contactNumber",
-    ]);
-    const result = await adminService.getAllFromDB(filter);
+    const filter = pick(req.query, adminFilterableFields);
+    const options = pick(req.query, ["limit", "page"]);
+    console.log(options);
+    const result = await adminService.getAllFromDB(filter, options);
     res.status(200).json({
       success: true,
       message: "Admins fetched successfully",
