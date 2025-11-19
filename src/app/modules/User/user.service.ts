@@ -1,14 +1,17 @@
 import { PrismaClient } from "../../../generated/prisma/client.js";
 import { UserRole } from "../../../generated/prisma/enums.js";
+import bcrypt from "bcrypt";
 import dotenv from "dotenv";
 dotenv.config();
 
 const prisma = new PrismaClient();
 
 const createAdmin = async (data: any) => {
+  const hashPassword = await bcrypt.hash(data.password, 10);
+
   const userData = {
     email: data.admin.email,
-    password: data.password,
+    password: hashPassword,
     role: UserRole.ADMIN,
   };
 
