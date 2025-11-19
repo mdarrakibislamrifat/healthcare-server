@@ -9,4 +9,6 @@ router.get("/", AdminController.getAllFromDB);
 
 router.get("/:id", AdminController.getByIdFromDB);
 
+router.patch("/:id", AdminController.updateFromDB);
+
 export const adminRoutes = router;
