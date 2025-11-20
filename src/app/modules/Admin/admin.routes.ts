@@ -11,4 +11,6 @@ router.get("/:id", AdminController.getByIdFromDB);
 
 router.patch("/:id", AdminController.updateFromDB);
 
+router.delete("/:id", AdminController.deleteFromDB);
+
 export const adminRoutes = router;
