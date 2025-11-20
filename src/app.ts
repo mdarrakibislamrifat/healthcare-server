@@ -1,12 +1,13 @@
+import httpStatus from "http-status";
 import express, {
   type Application,
+  type NextFunction,
   type Request,
   type Response,
 } from "express";
 import cors from "cors";
-import { UserRoutes } from "./app/modules/User/user.routes.js";
-import { adminRoutes } from "./app/modules/Admin/admin.routes.js";
 import router from "./app/routes/index.js";
+import globalErrorHandler from "./app/middlewares/globalErrorHandler.js";
 
 const app: Application = express();
 app.use(cors());
@@ -20,5 +21,6 @@ app.get("/", (req: Request, res: Response) => {
 });
 
 app.use("/api/v1", router);
+app.use(globalErrorHandler);
 
 export default app;
