@@ -1,4 +1,4 @@
-import type { Admin } from "../../../generated/prisma/client.js";
+import { UserStatus, type Admin } from "../../../generated/prisma/client.js";
 import { PaginationHelpers } from "../../../helpers/paginationHelper.js";
 import prisma from "../../../shared/prisma.js";
 import { adminSearchableFields } from "./admin.constant.js";
@@ -67,15 +67,51 @@ const getByIdFromDB = async (id: string) => {
 };
 
 const deleteFromDB = async (id: string) => {
+  await prisma.admin.findUniqueOrThrow({
+    where: {
+      id: id,
+    },
+  });
+
   const result = await prisma.$transaction(async (transactionClient) => {
     const adminDeletedData = await transactionClient.admin.delete({
       where: {
         id,
       },
     });
-    const userDeletedData = await transactionClient.user.delete({
+    await transactionClient.user.delete({
       where: {
         email: adminDeletedData.email,
+      },
+    });
+    return adminDeletedData;
+  });
+
+  return result;
+};
+
+const softDeleteFromDB = async (id: string) => {
+  await prisma.admin.findUniqueOrThrow({
+    where: {
+      id: id,
+    },
+  });
+
+  const result = await prisma.$transaction(async (transactionClient) => {
+    const adminDeletedData = await transactionClient.admin.update({
+      where: {
+        id,
+      },
+      data: {
+        isDeleted: true,
+      },
+    });
+    await transactionClient.user.update({
+      where: {
+        email: adminDeletedData.email,
+      },
+      data: {
+        status: UserStatus.DELETED,
       },
     });
     return adminDeletedData;
@@ -104,4 +140,5 @@ export const adminService = {
   getByIdFromDB,
   updateIntoDB,
   deleteFromDB,
+  softDeleteFromDB,
 };
