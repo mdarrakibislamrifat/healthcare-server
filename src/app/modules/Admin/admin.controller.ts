@@ -2,6 +2,7 @@ import { type Request, type Response } from "express";
 import { adminService } from "./admin.service.js";
 import pick from "../../../shared/pick.js";
 import { adminFilterableFields } from "./admin.constant.js";
+import sendResponse from "../../../shared/sendResponse.js";
 
 const getAllFromDB = async (req: Request, res: Response) => {
   try {
@@ -9,7 +10,8 @@ const getAllFromDB = async (req: Request, res: Response) => {
     const options = pick(req.query, ["limit", "page", "sortBy", "sortOrder"]);
 
     const result = await adminService.getAllFromDB(filter, options);
-    res.status(200).json({
+    sendResponse(res, {
+      statusCode: 200,
       success: true,
       message: "Admins fetched successfully",
       meta: result.meta,
@@ -28,9 +30,10 @@ const getByIdFromDB = async (req: Request, res: Response) => {
   const id = req.params.id;
   try {
     const result = await adminService.getByIdFromDB(id);
-    res.status(200).json({
+    sendResponse(res, {
+      statusCode: 200,
       success: true,
-      message: "Admins fetched By ID",
+      message: "Admins fetched by ID",
       data: result,
     });
   } catch (error) {
@@ -46,9 +49,10 @@ const updateFromDB = async (req: Request, res: Response) => {
   const id = req.params.id;
   try {
     const result = await adminService.updateIntoDB(id, req.body);
-    res.status(200).json({
+    sendResponse(res, {
+      statusCode: 200,
       success: true,
-      message: "Admins Data Updated",
+      message: "Admins update successfully",
       data: result,
     });
   } catch (error) {
@@ -64,9 +68,10 @@ const deleteFromDB = async (req: Request, res: Response) => {
   const id = req.params.id;
   try {
     const result = await adminService.deleteFromDB(id);
-    res.status(200).json({
+    sendResponse(res, {
+      statusCode: 200,
       success: true,
-      message: "Admins Data Deleted",
+      message: "Admins Deleted successfully",
       data: result,
     });
   } catch (error) {
@@ -82,9 +87,10 @@ const softDeleteFromDB = async (req: Request, res: Response) => {
   const id = req.params.id;
   try {
     const result = await adminService.softDeleteFromDB(id);
-    res.status(200).json({
+    sendResponse(res, {
+      statusCode: 200,
       success: true,
-      message: "Admins Data Deleted",
+      message: "Admin Deleted successfully",
       data: result,
     });
   } catch (error) {
