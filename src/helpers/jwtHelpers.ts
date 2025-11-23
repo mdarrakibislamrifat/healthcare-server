@@ -1,4 +1,3 @@
-import e from "express";
 import jwt, { type Secret, type SignOptions } from "jsonwebtoken";
 
 const generateToken = (

@@ -1,6 +1,13 @@
 import bcrypt from "bcrypt";
 import prisma from "../../../shared/prisma.js";
+import jwt from "jsonwebtoken";
 import { jwtHelpers } from "../../../helpers/jwtHelpers.js";
+import { is } from "zod/locales";
+
+type DecodedToken = {
+  email: string;
+  role: string;
+};
 
 const loginUser = async (payload: { email: string; password: string }) => {
   const userData = await prisma.user.findUniqueOrThrow({
@@ -44,7 +51,32 @@ const loginUser = async (payload: { email: string; password: string }) => {
 };
 
 const refreshToken = async (token: string) => {
-  console.log("Rrefresh Token", token);
+  let decodedData: DecodedToken;
+  try {
+    decodedData = jwt.verify(token, "secretkey1") as DecodedToken;
+  } catch (error) {
+    throw new Error("You are not authorized to access this route");
+  }
+
+  const isUserExist = await prisma.user.findUniqueOrThrow({
+    where: {
+      email: decodedData.email,
+    },
+  });
+
+  const accessToken = jwtHelpers.generateToken(
+    {
+      email: isUserExist.email,
+      role: isUserExist.role,
+    },
+    "secretkey",
+    "5m"
+  );
+
+  return {
+    accessToken,
+    needPasswordChange: isUserExist.needPasswordChange,
+  };
 };
 
 export const authService = {
