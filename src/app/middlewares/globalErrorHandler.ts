@@ -9,7 +9,7 @@ const globalErrorHandler = (
 ) => {
   res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
     success: false,
-    message: "Failed to fetch admins",
+    message: error.message || "Failed to fetch admins",
     error: error,
   });
 };
