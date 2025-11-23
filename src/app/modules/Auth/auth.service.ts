@@ -3,6 +3,7 @@ import prisma from "../../../shared/prisma.js";
 import jwt from "jsonwebtoken";
 import { jwtHelpers } from "../../../helpers/jwtHelpers.js";
 import { is } from "zod/locales";
+import { UserStatus } from "../../../generated/prisma/enums.js";
 
 type DecodedToken = {
   email: string;
@@ -13,6 +14,7 @@ const loginUser = async (payload: { email: string; password: string }) => {
   const userData = await prisma.user.findUniqueOrThrow({
     where: {
       email: payload.email,
+      status: UserStatus.ACTIVE,
     },
   });
 
@@ -53,7 +55,7 @@ const loginUser = async (payload: { email: string; password: string }) => {
 const refreshToken = async (token: string) => {
   let decodedData: DecodedToken;
   try {
-    decodedData = jwt.verify(token, "secretkey1") as DecodedToken;
+    decodedData = jwtHelpers.verifyToken(token, "secretkey1") as DecodedToken;
   } catch (error) {
     throw new Error("You are not authorized to access this route");
   }
@@ -61,6 +63,7 @@ const refreshToken = async (token: string) => {
   const isUserExist = await prisma.user.findUniqueOrThrow({
     where: {
       email: decodedData.email,
+      status: UserStatus.ACTIVE,
     },
   });
 
